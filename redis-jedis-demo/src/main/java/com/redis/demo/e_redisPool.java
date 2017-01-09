@@ -1,6 +1,7 @@
 package com.redis.demo;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 /**
  * @ClassName: redisPing
@@ -10,9 +11,24 @@ import redis.clients.jedis.Jedis;
  * @version V1.0
  */
 public class e_redisPool {
-	static Jedis jedis = new Jedis("127.0.0.1",6379);
 
 	public static void main(String[] args) {
+		JedisPool jedisPool = f_redisPoolUtil.getJedisPool();
+		JedisPool jedisPool2 = f_redisPoolUtil.getJedisPool();
+		System.out.println(jedisPool == jedisPool2);
+		
+		Jedis jedis = null;
+		
+		try {
+			jedis = jedisPool.getResource();
+			jedis.set("pool", "1");
+			System.out.println(jedis.get("pool"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			f_redisPoolUtil.release(jedisPool, jedis);
+		}
 		System.out.println(jedis.ping());
 	}
 	
